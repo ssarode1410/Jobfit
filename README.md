@@ -169,18 +169,18 @@ python3 jobfit.py sources --prune 
 - **Relocation Tags:** `RELO` matching is keyword-based. US postings mentioning standard domestic relocation benefits will match `RELO` unless excluded via `--no-relocation`. Always inspect recruiter details.  
    
     
-\## Contributing  
+## Contributing  
 Contributions, ideas, and pull requests from developers, SREs, recruiters, and job seekers are very welcome!  
-\### High-impact areas to improve  
-\- \*\*ATS & Job Sources:\*\* Add support for additional public career boards or improve existing parsers.  
-\- \*\*Skill Taxonomy (\`SKILLS\`):\*\* Expand canonical skills and aliases for non-DevOps domains (Data, Frontend, Backend, Security, Product, etc.).  
-\- \*\*Eligibility & Location Filters:\*\* Improve regex/heuristics for detecting remote-eligible countries, visa sponsorship, and false positives.  
-\- \*\*Scoring & Matching:\*\* Refine TF-IDF/skill weighting, add optional local embedding support (e.g., Sentence Transformers), or improve PDF text extraction.  
-\- \*\*Company Boards (\`boards.txt\`):\*\* Submit verified Greenhouse, Lever, or Ashby slugs for companies actively hiring.  
-\### How to contribute  
-1\. Fork the repository.  
-2\. Create a feature branch (\`git checkout -b feat/improve-scoring\`).  
-3\. Make your changes and test them locally (\`python3 jobfit.py sources\` / \`run\`).  
-4\. Commit your changes (\`git commit -m "Add: description of improvement"\`).  
-5\. Push to your branch and open a \*\*Pull Request\*\* explaining what you changed and why.  
-Not a coder? You can still help by opening an \*\*Issue\*\* to report broken board slugs, suggest features, or share feedback on the workflow.  
+### High-impact areas to improve  
+- **ATS & Job Sources:** Add support for additional public career boards or improve existing parsers.  
+- **Skill Taxonomy (`SKILLS`):** Expand canonical skills and aliases for non-DevOps domains (Data, Frontend, Backend, Security, Product, etc.).  
+- **Eligibility & Location Filters:** Improve regex/heuristics for detecting remote-eligible countries, visa sponsorship, and false positives.  
+- **Scoring & Matching:** Refine TF-IDF/skill weighting, add optional local embedding support (e.g., Sentence Transformers), or improve PDF text extraction.  
+- **Company Boards (`boards.txt`):** Submit verified Greenhouse, Lever, or Ashby slugs for companies actively hiring.  
+### How to contribute  
+1. Fork the repository.  
+2. Create a feature branch (`git checkout -b feat/improve-scoring`).  
+3. Make your changes and test them locally (`python3 jobfit.py sources` / `run`).  
+4. Commit your changes (`git commit -m "Add: description of improvement"`).  
+5. Push to your branch and open a **Pull Request** explaining what you changed and why.  
+Not a coder? You can still help by opening an **Issue** to report broken board slugs, suggest features, or share feedback on the workflow.  
