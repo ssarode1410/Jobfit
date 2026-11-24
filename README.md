@@ -1,26 +1,48 @@
-**jobfit**  
+**# jobfit**  
    
- Local, **zero-API-key** CLI tool: give it your base resume + one or more target designations. It collects live job openings from public sources and company ATS boards (Greenhouse, Lever, Ashby), checks location and visa eligibility for applicants in India, scores jobs against your experience, and exports formatted results to **Excel (`matches.xlsx`)** and **Markdown (`report.md`)**.  
+    
    
- It never applies automatically and never rewrites your resume for you—it acts as your local job search pipeline and application tracker.  
+     
+   
+    
+   
+   Local, **zero-API-key** CLI tool: give it your base resume + one or more target designations. It collects live job openings from public sources and company ATS boards (Greenhouse, Lever, Ashby), checks location and visa eligibility for applicants in India, scores jobs against your experience, and exports formatted results to **Excel (`matches.xlsx`)** and **Markdown (`report.md`)**.  
+   
+    
+   
+     
+   
+    
+   
+   It never applies automatically and never rewrites your resume for you—it acts as your local job search pipeline and application tracker.  
   
 ---  
 **Quick Start**  
    
- **1. Installation**  
+    
+   
+     
+   
+    
+   
+   **1. Installation**  
 ```  
-git clone https://github.com/ssarode1410/jobfit.git    
-  cd jobfit    
-      
-  python3 -m venv .venv    
-  source .venv/bin/activate  # Windows: .venv\Scripts\activate    
-  pip install -r requirements.txt    
+git clone https://github.com/ssarode1410/jobfit.git        
+    cd jobfit        
+            
+    python3 -m venv .venv        
+    source .venv/bin/activate  # Windows: .venv\Scripts\activate        
+    pip install -r requirements.txt        
+            
+         
       
    
 ```  
 ***Note (Linux/macOS):*** *If `pypdf` strips whitespace from your PDF resume, convert it to plain text first:*  
 ```  
-pdftotext Resume.pdf Resume.txt    
+pdftotext Resume.pdf Resume.txt        
+            
+         
       
    
 ```  
@@ -28,41 +50,73 @@ pdftotext Resume.pdf Resume.txt 
 ---  
 **Usage**  
    
- **Test Job Sources First**  
+    
    
- Verify which sources respond from your network and clean up any dead company slugs:  
+     
+   
+    
+   
+   **Test Job Sources First**  
+   
+    
+   
+     
+   
+    
+   
+   Verify which sources respond from your network and clean up any dead company slugs:  
 ```  
-python3 jobfit.py sources --prune    
+python3 jobfit.py sources --prune        
+            
+         
       
    
 ```  
 **Standard Run (India + Worldwide Remote)**  
 ```  
-python3 jobfit.py run Resume.txt \    
-    --role "Cloud Systems Engineer, SRE, Site Reliability Engineer, DevOps Engineer, Cloud Engineer" \    
-    --years 6.5 \    
-    --no-relocation    
+python3 jobfit.py run Resume.txt \        
+      --role "Cloud Systems Engineer, SRE, Site Reliability Engineer, DevOps Engineer, Cloud Engineer" \        
+      --years 6.5 \        
+      --no-relocation        
+            
+         
       
    
 ```  
 **International / Visa Relocation Search**  
    
- Separate your international job hunt into a dedicated output directory without overwriting your main India tracker:  
+    
+   
+     
+   
+    
+   
+   Separate your international job hunt into a dedicated output directory without overwriting your main India tracker:  
 ```  
-python3 jobfit.py run Resume.txt \    
-    --role "Cloud Systems Engineer, SRE, Site Reliability Engineer, DevOps Engineer, Cloud Engineer" \    
-    --years 6.5 \    
-    --sources "boards,arbeitnow,remotive,remoteok,weworkremotely,jobicy,himalayas" \    
-    --work work_intl \    
-    --out jobfit_intl    
+python3 jobfit.py run Resume.txt \        
+      --role "Cloud Systems Engineer, SRE, Site Reliability Engineer, DevOps Engineer, Cloud Engineer" \        
+      --years 6.5 \        
+      --sources "boards,arbeitnow,remotive,remoteok,weworkremotely,jobicy,himalayas" \        
+      --work work_intl \        
+      --out jobfit_intl        
+            
+         
       
    
 ```  
 **Score Pasted JDs (LinkedIn / Naukri / Workday)**  
    
- For postings from sites without open APIs, paste JDs into a folder for maximum scoring accuracy:  
+    
+   
+     
+   
+    
+   
+   For postings from sites without open APIs, paste JDs into a folder for maximum scoring accuracy:  
 ```  
-python3 jobfit.py run Resume.txt --role "DevOps Engineer, SRE" --jd-dir ./jds    
+python3 jobfit.py run Resume.txt --role "DevOps Engineer, SRE" --jd-dir ./jds        
+            
+         
       
    
 ```  
@@ -70,12 +124,30 @@ python3 jobfit.py run Resume.txt --role "DevOps Engineer, SRE" --jd-dir ./jds 
 ---  
 **Outputs**  
    
- When `jobfit` finishes a run, it populates your output directory (default: `./jobfit_out/`):  
+    
+   
+     
+   
+    
+   
+   When `jobfit` finishes a run, it populates your output directory (default: `./jobfit_out/`):  
 1. **`matches.xlsx`**  
    
     
    
-  An interactive Excel job application tracker featuring:  
+     
+   
+    
+   
+      
+   
+    
+   
+     
+   
+    
+   
+    An interactive Excel job application tracker featuring:  
 - Clickable **Direct Apply** URLs.  
 - Match Score, Location Tag, Company, and Role Title.  
 - Built-in **Status** dropdown menu (`To Apply`, `Applied`, `Interview`, `Rejected`, `Offer`, `Skipped`) to manage your daily workflow.  
@@ -84,7 +156,19 @@ python3 jobfit.py run Resume.txt --role "DevOps Engineer, SRE" --jd-dir ./jds 
    
     
    
-  A detailed gap analysis for all matched postings (score \ge 60\\%), including:  
+     
+   
+    
+   
+      
+   
+    
+   
+     
+   
+    
+   
+    A detailed gap analysis for all matched postings (score \ge 60\\%), including:  
 - Missing required & nice-to-have skills.  
 - Level and experience penalty breakdowns.  
 - Bullet point reordering and tailoring suggestions based on your resume.  
@@ -94,6 +178,8 @@ python3 jobfit.py run Resume.txt --role "DevOps Engineer, SRE" --jd-dir ./jds 
   
 |  |  |  |  
 | - | - | - |  
+|   |    |    |  
+|   |    |    |  
 |   |    |    |  
 | **Flag** |  **Description** |  **Default / Example** |  
 | `--role` |  Target job designations (comma-separated strings) |  Required |  
@@ -110,25 +196,50 @@ python3 jobfit.py run Resume.txt --role "DevOps Engineer, SRE" --jd-dir ./jds 
   
    
    
+   
+    
+   
+    
+   
+     
   
 ---  
 **Where Jobs Come From (No API Keys Required)**  
 - **Remote Feeds:** Remotive, RemoteOK, We Work Remotely (RSS), Jobicy, Himalayas, Arbeitnow.  
 - **Direct Company ATS Feeds:** Parses public ATS endpoints listed in `boards.txt` (**Greenhouse**, **Lever**, **Ashby**). This is how India on-site and hybrid roles are fetched without scraper keys.  
 - **Manual JDs (`--jd-dir`):** Postings from LinkedIn, Naukri, Indeed, Workday, Darwinbox, Keka, etc. can be pasted directly into a target folder.  
- **Adding & Managing Company Boards**  
    
- To track a new company's careers page:  
+    
+   
+   **Adding & Managing Company Boards**  
+   
+    
+   
+     
+   
+    
+   
+   To track a new company's careers page:  
 ```  
-python3 jobfit.py addboard https://jobs.lever.co/<company> https://boards.greenhouse.io/<company>    
+python3 jobfit.py addboard https://jobs.lever.co/<company> https://boards.greenhouse.io/<company>        
+            
+         
       
    
 ```  
 `addboard` identifies the underlying ATS, tests the endpoint, and appends valid slugs to `boards.txt`.  
    
- To test all listed boards and drop dead or renamed company endpoints:  
+    
+   
+     
+   
+    
+   
+   To test all listed boards and drop dead or renamed company endpoints:  
 ```  
-python3 jobfit.py sources --prune    
+python3 jobfit.py sources --prune        
+            
+         
       
    
 ```  
@@ -136,10 +247,18 @@ python3 jobfit.py sources --prune 
 ---  
 **"Can I take this job from India?" Location Logic**  
    
- Every posting is evaluated for India applicant eligibility and assigned one of the following tags:  
+    
+   
+     
+   
+    
+   
+   Every posting is evaluated for India applicant eligibility and assigned one of the following tags:  
   
 |  |  |  |  
 | - | - | - |  
+|   |    |    |  
+|   |    |    |  
 |   |    |    |  
 | **Tag** |  **Meaning** |  **Kept by Default** |  
 | **`IN`** |  Explicitly located in India (recognizes major Indian tech hubs & states). |  Yes |  
@@ -150,13 +269,31 @@ python3 jobfit.py sources --prune 
   
    
    
+   
+    
+   
+    
+   
+     
   
 ---  
 **Scoring Formula & Algorithm**  
    
- `jobfit` evaluates candidates against job descriptions using a multi-factor local scoring model:  
+    
    
- \text{Score} = (0.55 \times \text{Skill Overlap}) + (0.25 \times \text{TF-IDF Similarity}) + (0.20 \times \text{Title Match}) - \text{Experience Penalties}  
+     
+   
+    
+   
+   `jobfit` evaluates candidates against job descriptions using a multi-factor local scoring model:  
+   
+    
+   
+     
+   
+    
+   
+   \text{Score} = (0.55 \times \text{Skill Overlap}) + (0.25 \times \text{TF-IDF Similarity}) + (0.20 \times \text{Title Match}) - \text{Experience Penalties}  
 - **Skill Overlap (55%):** Weighted comparison of required vs. optional skills extracted from the JD against your resume.  
 - **TF-IDF Text Similarity (25%):** Cosine similarity between resume keyword distribution and JD description text.  
 - **Title Similarity (20%):** Standardized title normalization (e.g., mapping SRE ↔ DevOps ↔ Cloud Systems Engineer).  
@@ -169,18 +306,29 @@ python3 jobfit.py sources --prune 
 - **Relocation Tags:** `RELO` matching is keyword-based. US postings mentioning standard domestic relocation benefits will match `RELO` unless excluded via `--no-relocation`. Always inspect recruiter details.  
    
     
-## Contributing  
-Contributions, ideas, and pull requests from developers, SREs, recruiters, and job seekers are very welcome!  
-### High-impact areas to improve  
+\## Demo  
+**\*\* Excel tracker (‘matches.xlsx’):\*\***  
+**!\[JobFit Excel tracker\] (assets/excel_tracker.png)**  
+   
+    
+   
+      
+ **Contributing**  
+   
+ Contributions, ideas, and pull requests from developers, SREs, recruiters, and job seekers are very welcome!  
+ **High-impact areas to improve**  
 - **ATS & Job Sources:** Add support for additional public career boards or improve existing parsers.  
 - **Skill Taxonomy (`SKILLS`):** Expand canonical skills and aliases for non-DevOps domains (Data, Frontend, Backend, Security, Product, etc.).  
 - **Eligibility & Location Filters:** Improve regex/heuristics for detecting remote-eligible countries, visa sponsorship, and false positives.  
 - **Scoring & Matching:** Refine TF-IDF/skill weighting, add optional local embedding support (e.g., Sentence Transformers), or improve PDF text extraction.  
 - **Company Boards (`boards.txt`):** Submit verified Greenhouse, Lever, or Ashby slugs for companies actively hiring.  
-### How to contribute  
+ **How to contribute**  
 1. Fork the repository.  
 2. Create a feature branch (`git checkout -b feat/improve-scoring`).  
 3. Make your changes and test them locally (`python3 jobfit.py sources` / `run`).  
 4. Commit your changes (`git commit -m "Add: description of improvement"`).  
 5. Push to your branch and open a **Pull Request** explaining what you changed and why.  
-Not a coder? You can still help by opening an **Issue** to report broken board slugs, suggest features, or share feedback on the workflow.  
+   
+    
+   
+  Not a coder? You can still help by opening an **Issue** to report broken board slugs, suggest features, or share feedback on the workflow.  
