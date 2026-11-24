@@ -1,5 +1,5 @@
 
-# jobfit
+# Jobfit
 
 Local, **zero-API-key** CLI tool: give it your base resume + one or more target designations. It collects live job openings from public sources and company ATS boards (Greenhouse, Lever, Ashby), checks location and visa eligibility for applicants in India, scores jobs against your experience, and exports formatted results to **Excel (`matches.xlsx`)** and **Markdown (`report.md`)**.
 
@@ -97,7 +97,7 @@ When `jobfit` finishes a run, it populates your output directory (default: `./jo
 ## Demo
 
 **Excel tracker (`matches.xlsx`):**
-
+![Jobfit Excel tracker](assets/excel_tracker.png)
 
 ---
 
