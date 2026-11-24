@@ -1,4 +1,4 @@
-```markdown
+
 # jobfit
 
 Local, **zero-API-key** CLI tool: give it your base resume + one or more target designations. It collects live job openings from public sources and company ATS boards (Greenhouse, Lever, Ashby), checks location and visa eligibility for applicants in India, scores jobs against your experience, and exports formatted results to **Excel (`matches.xlsx`)** and **Markdown (`report.md`)**.
