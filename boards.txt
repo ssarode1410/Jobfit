@@ -1,0 +1,54 @@
+# Company career boards jobfit checks (public endpoints, no keys).
+# Format: greenhouse:<slug> | lever:<slug> | ashby:<slug>   (slug = the part after the host in the careers URL,
+#   e.g. boards.greenhouse.io/<slug>, jobs.lever.co/<slug>, jobs.ashbyhq.com/<slug>)
+# This is an UNVERIFIED starter list of companies that hire in India or remotely. Dead slugs are skipped
+# harmlessly. Run `python jobfit.py sources` to see which respond, then prune and add your own.
+
+# --- Greenhouse ---
+greenhouse:gitlab
+greenhouse:cloudflare
+greenhouse:datadog
+greenhouse:elastic
+greenhouse:mongodb
+greenhouse:databricks
+greenhouse:stripe
+greenhouse:twilio
+greenhouse:okta
+greenhouse:pagerduty
+greenhouse:samsara
+greenhouse:coinbase
+greenhouse:dropbox
+greenhouse:pinterest
+greenhouse:airbnb
+greenhouse:grafanalabs
+greenhouse:newrelic
+greenhouse:zscaler
+greenhouse:sumologic
+greenhouse:rubrik
+# --- Lever ---
+lever:palantir
+lever:spotify
+lever:meesho
+lever:cred
+# --- Ashby ---
+ashby:openai
+ashby:notion
+ashby:ramp
+ashby:linear
+ashby:deel
+ashby:supabase
+# --- India Product & Cloud/Infra Heavy (Greenhouse) ---
+greenhouse:ensono
+greenhouse:wizinc
+greenhouse:abnormalsecurity
+greenhouse:cloudsek
+greenhouse:druva
+greenhouse:pubmatic
+# --- India Tech & Startups (Lever) ---
+lever:epifi
+lever:paytm
+# --- India & Remote-India Hiring (Ashby) ---
+ashby:sarvam
+ashby:certifyos
+ashby:interview-kickstart
+ashby:secfix

@@ -1,0 +1,18 @@
+# Virtual environment & Python cache
+.venv/
+__pycache__/
+*.pyc
+
+# Personal resumes & local JDs
+*.pdf
+*.docx
+*Resume*.txt
+*resume*.txt
+
+# Generated outputs & backups
+work/
+work_*/
+jobfit_out/
+jobfit_*/
+*.xlsx
+*.bak
