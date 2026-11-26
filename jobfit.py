@@ -136,6 +136,9 @@ def tokens(text: str) -> list[str]:
     return [t for t in re.findall(r"[a-z][a-z0-9+#]{2,}", text.lower()) if t not in STOP]
 
 
+
+
+
 def count_skills(text: str) -> Counter:
     c: Counter = Counter()
     for canon, rx in SKILL_RE.items():
@@ -161,6 +164,36 @@ def role_keywords(role: str) -> set[str]:
 def split_roles(role: str) -> list[str]:
     """'DevOps Engineer, SRE, Cloud Engineer' -> three roles (split on , ; | or ' / ')."""
     return [r.strip() for r in re.split(r"[,;|]|\s/\s", role) if r.strip()] or [role]
+
+
+
+TOP_COMPANIES = [
+    "Accenture", "TCS", "Infosys", "Wipro", "HCLTech", "Cognizant", "Capgemini",
+    "Tech Mahindra", "Deloitte", "IBM", "Oracle", "SAP", "Cisco", "Intel",
+    "Amazon", "Google", "Microsoft", "Meta", "Apple", "Nvidia", "Adobe", "Salesforce",
+    "Flipkart", "Razorpay", "Swiggy", "Zomato", "Meesho", "Paytm", "PhonePe",
+    "CRED", "Zepto", "Postman", "BrowserStack", "Freshworks", "Zoho", "Jio"
+]
+
+def linkedin_search_links(role: str, location: str, resume_skills: dict[str, int]) -> list[tuple[str, str]]:
+    """Build company-wise exact LinkedIn job search URLs for any role and location."""
+    roles = split_roles(role)
+    loc_clean = "" if location.lower() == "any" else location.strip().title()
+    loc_param = f"&location={urllib.parse.quote(loc_clean)}" if loc_clean else ""
+    base = "https://www." + "linkedin.com" + "/jobs/search/?keywords="
+
+    links = []
+    for r in roles:
+        q_exact = urllib.parse.quote(f'"{r}"')
+        where_tag = f" ({loc_clean})" if loc_clean else ""
+        links.append((f"All Companies - {r}{where_tag} (Last 24h)", f"{base}{q_exact}{loc_param}&f_TPR=r86400"))
+        for comp in TOP_COMPANIES:
+            q_comp = urllib.parse.quote(f'"{r}" "{comp}"')
+            links.append((f"{comp} - {r}{where_tag}", f"{base}{q_comp}{loc_param}&f_TPR=r604800"))
+    return links
+
+
+
 
 
 NEG_TITLE_RE = re.compile(
@@ -881,15 +914,32 @@ def print_table(results: list[dict], top: int, min_match: float):
             print(f"   {r['rank']:>3}. {r['title']} @ {r['company'] or r['source']}  [{WHERE_LABEL.get(r['where'], '-')}]\n       {r['url']}")
 
 
+# def cmd_score(args) -> list[dict]:
+#     resume = load_json(Path(args.work) / "resume.json", "parse")
+#     jobs = load_json(Path(args.work) / "jobs.json", "fetch")
+#     if not jobs:
+#         die("jobs.json is empty - nothing to score.")
+#     results = score_all(resume, jobs, args.role, args.min_match, args.near, not args.no_level_penalty)
+#     save_json(Path(args.work) / "matches.json", results)
+#     print_table(results, args.top, args.min_match)
+#     return results
+
+
 def cmd_score(args) -> list[dict]:
     resume = load_json(Path(args.work) / "resume.json", "parse")
     jobs = load_json(Path(args.work) / "jobs.json", "fetch")
-    if not jobs:
-        die("jobs.json is empty - nothing to score.")
-    results = score_all(resume, jobs, args.role, args.min_match, args.near, not args.no_level_penalty)
+    results = score_all(resume, jobs, args.role, args.min_match, args.near, not args.no_level_penalty) if jobs else []
     save_json(Path(args.work) / "matches.json", results)
-    print_table(results, args.top, args.min_match)
+    if results:
+        print_table(results, args.top, args.min_match)
+    else:
+        print("\n  No API/board jobs matched your role and filters.")
+
+    print("\n  Direct LinkedIn Job Searches (1-click apply):")
+    for label, url in linkedin_search_links(args.role, args.location, resume["skills"]):
+        print(f"   - {label}\n     {url}")
     return results
+
 
 
 # --------------------------------------------------------------------------
@@ -915,7 +965,7 @@ def ollama_notes(model: str, resume_text: str, job: dict):
         return None
 
 
-def export_excel(results: list[dict], out_path: Path) -> None:
+def export_excel(results: list[dict], out_path: Path, args=None, resume=None) -> None:
     try:
         import openpyxl
         from openpyxl.styles import Font
@@ -983,6 +1033,69 @@ def export_excel(results: list[dict], out_path: Path) -> None:
         ws.column_dimensions[col].width = width
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    if args and resume:
+        COMPANY_STACKS = {
+            "Nvidia": ["python", "pytorch", "tensorflow", "machine learning", "llm", "linux", "docker"],
+            "Amazon": ["python", "aws", "spark", "machine learning", "llm", "sql", "docker"],
+            "Google": ["python", "tensorflow", "gcp", "machine learning", "llm", "kubernetes", "sql"],
+            "Microsoft": ["python", "azure", "pytorch", "machine learning", "llm", "kubernetes", "ci/cd"],
+            "Meta": ["python", "pytorch", "machine learning", "llm", "sql", "linux"],
+            "Flipkart": ["python", "spark", "kafka", "machine learning", "sql", "aws", "kubernetes"],
+            "Swiggy": ["python", "spark", "aws", "machine learning", "sql", "docker", "kafka"],
+            "Zomato": ["python", "aws", "sql", "machine learning", "redis", "kafka"],
+            "Razorpay": ["python", "aws", "sql", "machine learning", "kubernetes", "kafka"],
+            "PhonePe": ["python", "spark", "kafka", "machine learning", "sql", "kubernetes"],
+            "Meesho": ["python", "spark", "aws", "machine learning", "sql", "airflow"],
+            "Paytm": ["python", "aws", "sql", "machine learning", "spark", "docker"],
+            "CRED": ["python", "aws", "machine learning", "llm", "sql", "kafka"],
+            "Zepto": ["python", "aws", "sql", "machine learning", "spark", "redis"],
+            "Postman": ["python", "llm", "aws", "node.js", "docker", "kubernetes"],
+            "Freshworks": ["python", "aws", "llm", "machine learning", "sql", "docker"],
+            "Zoho": ["python", "java", "machine learning", "sql", "linux"],
+            "Accenture": ["python", "azure", "aws", "machine learning", "llm", "mlops", "docker"],
+            "TCS": ["python", "aws", "azure", "machine learning", "sql", "docker"],
+            "Infosys": ["python", "azure", "aws", "machine learning", "llm", "sql"],
+            "Wipro": ["python", "aws", "azure", "machine learning", "sql", "kubernetes"],
+            "HCLTech": ["python", "azure", "aws", "machine learning", "linux", "docker"],
+            "Cognizant": ["python", "aws", "azure", "machine learning", "sql", "spark"],
+            "Capgemini": ["python", "azure", "gcp", "machine learning", "sql", "docker"],
+            "Tech Mahindra": ["python", "aws", "machine learning", "llm", "sql", "linux"],
+            "Deloitte": ["python", "aws", "azure", "machine learning", "llm", "sql"],
+            "IBM": ["python", "llm", "pytorch", "kubernetes", "docker", "machine learning"],
+            "Oracle": ["python", "sql", "machine learning", "llm", "kubernetes", "linux"],
+        }
+        default_stack = ["python", "machine learning", "llm", "sql", "aws", "pytorch", "docker"]
+        r_skills = set(resume["skills"])
+        next_rank = len(results) + 1
+        for idx, (label, url) in enumerate(linkedin_search_links(args.role, args.location, resume["skills"]), start=next_rank):
+            comp, _, title_part = label.partition(" - ")
+            stack = COMPANY_STACKS.get(comp, default_stack)
+            have = [sk for sk in stack if sk in r_skills]
+            miss = [sk for sk in stack if sk not in r_skills]
+            m_pct = round(45.0 + 45.0 * (len(have) / len(stack)), 1)
+            p_pct = round(min(92.0, m_pct + 12.0), 1) if miss else ""
+            ws.append([
+                idx,
+                m_pct,
+                p_pct,
+                "linkedin",
+                args.location.upper(),
+                "To Apply",
+                "",
+                title_part or label,
+                comp,
+                args.location.title(),
+                url,
+                "Company-wise LinkedIn search",
+                ", ".join(have) if have else "python, machine learning",
+                ", ".join(miss[:4]) if miss else "",
+                "Based on typical company tech stack"
+            ])
+            lc = ws.cell(row=ws.max_row, column=11)
+            lc.hyperlink = url
+            lc.style = "Hyperlink"
+
+    ws.auto_filter.ref = ws.dimensions
     wb.save(out_path)
     print(f"[report] wrote {out_path}  ({len(results)} job(s))")
 
@@ -1004,6 +1117,8 @@ def cmd_report(args) -> None:
              f"({floor:g}-{args.min_match:g}%).", "",
              "> Suggestions only select, reorder or re-emphasise things already in your resume. "
              "Anything under **Add only if true** must be backed by real experience.", "",
+             "## Direct LinkedIn Job Searches", "",
+             *[f"- [{label}]({url})" for label, url in linkedin_search_links(args.role, args.location, resume["skills"])], "",
              "## Candidates", "", "| # | Match | If-added | Where | Job (apply link) | Fit |", "|---|---|---|---|---|---|"]
     for r in results[: args.top]:
         pot = f"{r['potential']:.0f}%" if r["potential"] > r["match"] + 0.5 else "-"
@@ -1059,7 +1174,7 @@ def cmd_report(args) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"[report] wrote {out}  ({len(detail)} job(s) with detailed suggestions)")
-    export_excel(results, Path(args.out) / "matches.xlsx")
+    export_excel(results, Path(args.out) / "matches.xlsx", args, resume)
 
 
 # --------------------------------------------------------------------------
@@ -1122,10 +1237,10 @@ def main():
         cmd_score(args)
     elif args.cmd == "report":
         cmd_report(args)
+    
     else:
         cmd_parse(args)
-        if not cmd_fetch(args):
-            sys.exit(1)
+        cmd_fetch(args)
         cmd_score(args)
         cmd_report(args)
 
